@@ -48,11 +48,12 @@ var SpecReporter = function(baseReporterDecorator, formatError) {
       }
     }
 
-    this.write("\nFAILURES:\n");
-
-    var i;
-    for(i = 0; i < this.failures.length; i++) {
-      this.write(this.failures[i] + "\n");
+    if (this.failures.length > 0) {
+      this.write("\nFAILURES:\n");
+      var i;
+      for(i = 0; i < this.failures.length; i++) {
+        this.write(this.failures[i] + "\n");
+      }
     }
 
     this.write("\n");
