@@ -22,6 +22,8 @@ var SpecReporter = function(baseReporterDecorator, formatError) {
       browser.id;
       browser.fullName;
     });
+
+    this.failures = [];
   };
 
   this.onBrowserComplete = function(browser) {
@@ -46,10 +48,18 @@ var SpecReporter = function(baseReporterDecorator, formatError) {
       }
     }
 
+    this.write("\nFAILURES:\n");
+
+    var i;
+    for(i = 0; i < this.failures.length; i++) {
+      this.write(this.failures[i] + "\n");
+    }
+
     this.write("\n");
   };
 
   this.currentSuite = [];
+  this.failures = [];
   this.writeSpecMessage = function(status) {
     return (function(browser, result) {
       var suite = result.suite
@@ -65,7 +75,7 @@ var SpecReporter = function(baseReporterDecorator, formatError) {
             this.writeCommonMsg(indent + value + ':\n');
             this.currentSuite = [];
           }
-          indent += "    ";
+          indent += '   ';
         }).bind(this)
       );
       this.currentSuite = suite;
@@ -74,7 +84,9 @@ var SpecReporter = function(baseReporterDecorator, formatError) {
       //TODO: add timing information
       var msg = '  '  + indent + status + " - " + specName, specName
 
+      var _failures = this.failures;
       result.log.forEach(function(log) {
+        _failures.push(status + ' - ' + suite + ' ' + log);
         msg += formatError(log, '\t');
       });
 
@@ -89,9 +101,9 @@ var SpecReporter = function(baseReporterDecorator, formatError) {
     }).bind(this);
   };
 
-  this.specSuccess = this.writeSpecMessage('PASSED '.green);
-  this.specSkipped = this.writeSpecMessage('SKIPPED'.gray);
-  this.specFailure = this.writeSpecMessage('FAILED '.red);
+  this.specSuccess = this.writeSpecMessage('YAY 😀 '.green);
+  this.specSkipped = this.writeSpecMessage('NAY 😐 '.gray);
+  this.specFailure = this.writeSpecMessage('BOO 😱 '.red);
 };
 
 SpecReporter.$inject = ['baseReporterDecorator', 'formatError'];
